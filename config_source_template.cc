@@ -77,7 +77,7 @@ bool $classname::save_file(const std::string& filename,
 #end for
 
     os << std::endl << std::endl;
-    os << "\$hash:" << CONFIG_HASH << std::endl;
+    os << "#hash:" << CONFIG_HASH << std::endl;
 
     return true;
 }
@@ -91,7 +91,7 @@ bool $classname::load_file(const std::string& filename,
     char line[MAX_LENGTH];
 
     const boost::regex pattern("\\s*(\\w+)\\s+=\\s+(.+)\\s*$");
-    const boost::regex version_pattern("\\$hash:([0-9]+)$");
+    const boost::regex version_pattern("\\#hash:([0-9]+)$");
     boost::match_results<std::string::const_iterator> match;
 
     std::ifstream is(filename.c_str());
