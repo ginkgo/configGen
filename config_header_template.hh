@@ -12,6 +12,8 @@ $('\n'.join([line.strip() for line in $include.split('/n')]))
 
 class $(classname)
 {
+    static const long CONFIG_HASH = $(config_hash);
+
     public:
 
 #for $enum, $elems in $enums.iteritems()
@@ -29,8 +31,8 @@ class $(classname)
 
     int parse_args(int argc, char** argv);
 
-    static bool load_file(const std::string& filename, 
-                          $(classname)& $(classname.lower()));
+    static bool load_file(const std::string& filename, $(classname)& $(classname.lower()), 
+                          bool& needs_resave);
     static bool save_file(const std::string& filename, 
                           const $(classname)& $(classname.lower()));
 

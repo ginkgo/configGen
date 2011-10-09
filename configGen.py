@@ -71,7 +71,8 @@ template_namespace = {'classname' : classname,
                       'enums' : parsed_file['enums'],
                       'fields' : parsed_file['values'],
                       'globals' : parsed_file['globals'],
-                      'header_ext' : options.header_ext
+                      'header_ext' : options.header_ext,
+                      'config_hash' : hash(open(filename).read())
                       }
 
 header_template = Template(open(script_dir+'config_header_template.hh', 'r').read(),
