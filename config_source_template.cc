@@ -77,7 +77,7 @@ bool $classname::save_file(const std::string& filename,
 #end for
 
     os << std::endl << std::endl;
-    os << "$hash:" << CONFIG_HASH << std::endl;
+    os << "\$hash:" << CONFIG_HASH << std::endl;
 
     return true;
 }
