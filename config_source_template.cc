@@ -109,7 +109,7 @@ bool $classname::load_file(const std::string& filename,
                 return false;
             }
         } else if (boost::regex_match(strline, match, version_pattern)) {
-            long config_hash;
+            long config_hash = 0;
             from_string<long>(match[1], config_hash);
 
             if (config_hash == CONFIG_HASH) {
