@@ -5,7 +5,9 @@ from optparse import OptionParser
 from xml.etree.ElementTree import ElementTree
 import os.path
 
-from Cheetah.Template import Template
+from wheezy.template.engine import Engine
+from wheezy.template.ext.core import CoreExtension
+from wheezy.template.loader import FileLoader
 
 script_dir = os.path.dirname(__file__) + os.sep
 
@@ -19,7 +21,7 @@ def parse_file(filename):
     
     enums = {}
     for enum in tree.findall("enums/enum"):
-        elements = map(lambda f: f.attrib["name"], enum.getiterator("element"))
+        elements = list(map(lambda f: f.attrib["name"], enum.getiterator("element")))
         enums[enum.attrib["name"]] = elements
 
     values = []
@@ -65,31 +67,30 @@ filename = args[0]
 parsed_file = parse_file(filename)
 classname = parsed_file["classname"]
 
-template_namespace = {'classname' : classname,
+template_namespace = {'class_name' : classname,
                       'header_ext' : options.header_ext,
                       'include' : parsed_file['include'],
                       'enums' : parsed_file['enums'],
                       'fields' : parsed_file['values'],
-                      'globals' : parsed_file['globals'],
-                      'header_ext' : options.header_ext,
+                      'global_vars' : parsed_file['globals'],
                       'config_hash' : hash(open(filename).read())
                       }
 
-header_template = Template(open(script_dir+'config_header_template.hh', 'r').read(),
-                           template_namespace)
-source_template = Template(open(script_dir+'config_source_template.cc', 'r').read(),
-                           template_namespace)
+engine = Engine(loader=FileLoader([script_dir]), extensions=[CoreExtension()])
 
-header_file = open('%s/%s.%s' % (options.output_dir, 
-                                 classname, 
-                                 options.header_ext),
-                   'w')
+generated_warning = '/* WARNING: This file was automatically generated */\n/* Do not edit. */\n'
 
-source_file = open('%s/%s.%s' % (options.output_dir, 
-                                 classname, 
-                                 options.source_ext),
-                   'w')
+for filename,extension in [('config_header_template.hh', options.header_ext),
+                           ('config_source_template.cc', options.source_ext)
+                           ]:
+    template_path = '%s/%s' % (script_dir,filename)
+    
+    infile = os.path.basename(template_path)
+    outfile = '%s/%s.%s' % (options.output_dir, classname, extension)
 
-header_file.write(str(header_template))
-source_file.write(str(source_template))
+    template = engine.get_template(infile)
 
+    with open(outfile, 'w') as out:
+        out.write(generated_warning)
+        out.write(template.render(template_namespace))
+        

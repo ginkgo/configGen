@@ -1,83 +1,88 @@
-// WARNING: This file was automatically generated
-// Do not edit.
+@require(class_name, header_ext, include, enums, fields, global_vars, config_hash)
 
-#ifndef $(classname.upper() + '_' + $header_ext.upper())
-#define $(classname.upper() + '_' + $header_ext.upper())
+#ifndef @class_name.upper()_@header_ext.upper()
+#define @class_name.upper()_@header_ext.upper()
 
-#raw
 #include <string>
-#end raw
 
-$('\n'.join([line.strip() for line in $include.split('/n')]))
+@for line in include.split('/n'):
+@line.strip()
+@end
 
-class $(classname)
+class @class_name
 {
-    static const long CONFIG_HASH = $(config_hash);
+    static const long CONFIG_HASH = @str(config_hash)L;
 
     public:
 
-#for $enum, $elems in $enums.iteritems()
-    enum $(enum)
+@for enum_type,elems in enums.items():
+    enum @enum_type
     {
-#for $elem in $elems
-        $(elem),
-#end for
+@for elem in elems:
+        @elem,
+@end
     };
-#end for
-    $(classname)();
+ 
+@end
+    
+    @class_name!s();
     
     bool set_value(const std::string& field_name, 
                    const std::string& field_value);
 
     int parse_args(int argc, char** argv);
 
-    static bool load_file(const std::string& filename, $(classname)& $(classname.lower()), 
+    static bool load_file(const std::string& filename, @class_name& @class_name.lower(), 
                           bool& needs_resave);
     static bool save_file(const std::string& filename, 
-                          const $(classname)& $(classname.lower()));
+                          const @class_name& @class_name.lower());
 
-#for $field in $fields:
+@for field in fields:
 
-    $field['type'] $(field['name'])() { return _$field['name']; }
-    void set_$(field['name'])($field['type'] v) { _$field['name'] = v; }
-#end for
+    @field['type'] @field['name']!s() { return _@field['name']; }
+    void set_@field['name']!s(@field['type'] v) { _@field['name'] = v; }
+@end
 
     private:
-#for $field in $fields:
+@for field in fields:
 
-#for $line in [line.strip() for line in $field['comment'].split('\n') if len(line.strip()) > 0]
-    // $line
-#end for
-    $field['type'] _$field['name'];
-#end for
+@for line in [line.strip() for line in field['comment'].split('\n') if len(line.strip()) > 0]:
+    // @line
+@end
+    @field['type'] _@field['name'];
+@end
 
 };
 
-#for $global_var in $globals
-extern $(classname) $global_var;
-#end for
 
-#for $enum, $elems in $enums.iteritems()
-// String converter functions for $enum
-template<> inline bool from_string(const string& s, $classname::$enum& t)
+@for global_var in global_vars:
+extern @class_name @global_var;
+@end
+ 
+@for enum_type,elems in enums.items():
+// String converter functions for @enum_type
+template<> inline bool from_string(const string& s, @class_name::@enum_type& t)
 {
-#for $no,$elem in enumerate(elems)
-    $('else 'if no > 0 else '')if (s == "$elem") { t = $classname::$elem; return true; }
-#end for
+@for elem in elems:
+    if (s == "@elem") {t = @class_name::@elem; return true; }
+@end
     
     return false;
 }
 
-template<> inline string to_string(const $classname::$enum& t) {
+template<> inline string to_string(const @class_name::@enum_type& t) {
     switch(t) {
-#for $elem in elems
-    case $classname::$elem:
-        return "$elem";
-#end for
+@for elem in elems:
+    case @class_name::@elem:
+        return "@elem";
+@end
     default:
         return "unknown";
     }
 }
 
-#end for
+@end
+
+                                
 #endif
+

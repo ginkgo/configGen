@@ -1,38 +1,33 @@
-// WARNING: This file was automatically generated
-// Do not edit.
+@require(class_name, header_ext, include, enums, fields, global_vars, config_hash)
 
-$('#include') "$classname.$header_ext"
+#include "@class_name!s.@header_ext"
 
-#raw
 #include <iostream>
 #include <fstream>
 #include <boost/regex.hpp>
-#end raw
 
-#for $global_var in $globals
-$classname $global_var;
-#end for
+@for global_var in global_vars:
+@class_name @global_var;
+@end
 
-$classname::$(classname)() 
+@class_name::@class_name!s() 
 {
-#for $no,$field in enumerate($fields)
-    set_value("$field['name']", "$field['default']");
-#end for
+@for no,field in enumerate(fields):
+    set_value("@field['name']", "@field['default']");
+@end
 }
 
-bool $classname::set_value(const std::string& field_name,
-                           const std::string& field_value)
+bool @class_name::set_value(const std::string& field_name,
+                            const std::string& field_value)
 {    
-#for $no, $field in enumerate($fields)
-    $('} else 'if no > 0 else '')if (field_name == "$(field['name'])") { 
-        return from_string(field_value, _$field['name']);
-#end for
-    }
+@for field in fields:
+    if (field_name == "@field['name']") return from_string(field_value, _@field['name']);
+@end
 
     return false;
 }
 
-int $classname::parse_args(int argc, char** argv)
+int @class_name::parse_args(int argc, char** argv)
 {
     const boost::regex pattern("--(\\w+)=(.+)$");
     boost::match_results<std::string::const_iterator> match;
@@ -57,8 +52,8 @@ int $classname::parse_args(int argc, char** argv)
     return other;
 }
 
-bool $classname::save_file(const std::string& filename,
-                           const $(classname)& config)
+bool @class_name::save_file(const std::string& filename,
+                            const @class_name& config)
 {
     std::ofstream os(filename.c_str());
 
@@ -67,14 +62,14 @@ bool $classname::save_file(const std::string& filename,
         return false;
     }
 
-#for $field in $fields
-#for $line in [line.strip() for line in $field['comment'].split('\n') if len(line.strip()) > 0]
-    os << "// $line" << std::endl;
-#end for
-    os << "$field['name'] = " << to_string(config._$(field['name'])) << std::endl;
+@for field in fields:
+@for line in [line.strip() for line in field['comment'].split('\n') if len(line.strip()) > 0]:
+    os << "// @line" << std::endl;
+@end
+    os << "@field['name'] = " << to_string(config._@field['name']) << std::endl;
     os << std::endl;
 
-#end for
+@end
 
     os << std::endl << std::endl;
     os << "#hash:" << CONFIG_HASH << std::endl;
@@ -82,8 +77,8 @@ bool $classname::save_file(const std::string& filename,
     return true;
 }
 
-bool $classname::load_file(const std::string& filename,
-                           $(classname)& config, bool& needs_resave)
+bool @class_name::load_file(const std::string& filename,
+                            @class_name& config, bool& needs_resave)
 {
     needs_resave = true;
 
