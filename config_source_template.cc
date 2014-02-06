@@ -27,7 +27,7 @@ bool @class_name::set_value(const std::string& field_name,
     return false;
 }
 
-int @class_name::parse_args(int argc, char** argv)
+bool @class_name::parse_args(int& argc, char** argv)
 {
     const boost::regex pattern("--(\\w+)=(.+)$");
     boost::match_results<std::string::const_iterator> match;
@@ -42,6 +42,7 @@ int @class_name::parse_args(int argc, char** argv)
             if (!success) {
                 cerr << "Failed to set " << match[1] 
                      << " to " << match[2] << endl;
+                return false;
             }
         } else {
             argv[other] = argv[i];
@@ -49,7 +50,9 @@ int @class_name::parse_args(int argc, char** argv)
         }
     }
 
-    return other;
+    argc = other;
+
+    return true;
 }
 
 bool @class_name::save_file(const std::string& filename,

@@ -30,7 +30,7 @@ class @class_name
     bool set_value(const std::string& field_name, 
                    const std::string& field_value);
 
-    int parse_args(int argc, char** argv);
+    bool parse_args(int& argc, char** argv);
 
     static bool load_file(const std::string& filename, @class_name& @class_name.lower(), 
                           bool& needs_resave);
