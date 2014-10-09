@@ -39,18 +39,18 @@ bool @class_name::parse_args(int& argc, char** argv)
         if (boost::regex_match(arg, match, pattern)) {
             bool success = set_value(match[1], match[2]);
 
-            if (!success) {
-                cerr << "Failed to set " << match[1] 
-                     << " to " << match[2] << endl;
-                return false;
-            }
+            // if (!success) {
+            //     cerr << "Failed to set " << match[1] 
+            //          << " to " << match[2] << endl;
+            //     return false;
+            // }
         } else {
-            argv[other] = argv[i];
-            other++;
+            // argv[other] = argv[i];
+            // other++;
         }
     }
 
-    argc = other;
+    //argc = other;
 
     return true;
 }
